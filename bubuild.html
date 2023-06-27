@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-physics-system@1.4.0/dist/aframe-physics-system.min.js"></script>
+    <script src="https://unpkg.com/aframe-particle-system-component@1.0.9/dist/aframe-particle-system-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-gradient-sky@1.4.0/dist/gradientsky.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras.ocean@%5E3.5.x/dist/aframe-extras.ocean.min.js"></script>
+    <script src="https://rawgit.com/mayognaise/aframe-html-shader/master/dist/aframe-html-shader.min.js"></script>
+    <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
+    <script>
+        function getUrlParam(parameter, defaultValue){
+            let urlParameter = defaultValue;
+            if(window.location.href.indexOf(parameter) > -1){
+                urlParameter = getUrlVars()[parameter];
+                }
+            return urlParameter;
+        }
+
+        window.onload = function() {
+            const imageUrl = getUrlParam('imageUrl', '');
+            const userHtml = getUrlParam('userHtml', '');
+            document.getElementById('animated-sky').setAttribute('src', imageUrl);
+            document.getElementById('userHtmlContainer').innerHTML = decodeURIComponent(userHtml);
+        };
+    </script>
+</head>
+<body>
+    <a-scene embedded id="scene">
+        <a-sky id="animated-sky" rotation="0 0 0"></a-sky>
+        <a-entity id="userHtmlContainer"></a-entity>
+        <a-entity camera look-controls wasd-controls position="0 300 0" vr-mode-ui></a-entity>
+    </a-scene>
+</body>
+</html>
