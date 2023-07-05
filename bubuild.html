@@ -5,42 +5,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webxr-polyfill/0.10.10/webxr-polyfill.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script>
-      let lastStepTime = 0;
-      const stepCooldown = 500; // cooldown in ms
-
-      AFRAME.registerComponent('move-on-step', {
+      AFRAME.registerComponent('move-on-tilt', {
         tick: function () {
           const camera = this.el;
           const currentRotation = camera.getAttribute('rotation');
-
-          if (window.stepDetected) {
-            const now = Date.now();
-
-            if (now - lastStepTime > stepCooldown) {
-              const movementSpeed = 0.1; // adjust this to get the desired speed
-              camera.object3D.position.z -= movementSpeed * Math.cos(currentRotation.y * Math.PI / 180);
-              camera.object3D.position.x -= movementSpeed * Math.sin(currentRotation.y * Math.PI / 180);
-
-              lastStepTime = now;
-              window.stepDetected = false;
-            }
+          if (window.orientationData) {
+            const forwardBackwardTilt = window.orientationData.beta;
+            const movementSpeed = forwardBackwardTilt / 1000; // adjust this to get the desired speed
+            camera.object3D.position.z -= movementSpeed * Math.cos(currentRotation.y * Math.PI / 180);
+            camera.object3D.position.x -= movementSpeed * Math.sin(currentRotation.y * Math.PI / 180);
           }
         }
       });
-
-      window.addEventListener('devicemotion', function(event) {
-        if (event.accelerationIncludingGravity.z > 1) {
-          window.stepDetected = true;
-        }
+      window.addEventListener('deviceorientation', function(event) {
+        window.orientationData = event;
       });
     </script>
   </head>
   <body>
     <a-scene>
-      <a-entity camera look-controls wasd-controls position="0 1.6 0" vr-mode-ui move-on-step></a-entity>  
+      <a-entity camera look-controls wasd-controls position="0 1.6 0" vr-mode-ui move-on-tilt></a-entity>  
       <a-entity oculus-touch-controls="hand: right"></a-entity>
-      
-<!-- Ground -->
+      <!-- Ground -->
       <a-plane src="https://thumbs.dreamstime.com/b/texture-metal-surface-meteorite-image-can-be-used-as-background-design-39151144.jpg"
                 position="0 -3 -4"          
                 rotation="-90 0 0"          
@@ -52,14 +38,9 @@
                 position="10 3 -20"           
                 scale="15 25 15"           
                 static-body></a-sphere> 
-
-
-
     </a-scene>
     <script>
       const polyfill = new WebXRPolyfill();
     </script>
   </body>
 </html>
-
-
